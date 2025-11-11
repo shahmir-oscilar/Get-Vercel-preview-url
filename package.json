@@ -1,6 +1,6 @@
 {
   "name": "get-vercel-preview-url",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "description": "Github Action used to get the preview url of a vercel deployment",
   "main": "index.js",
   "scripts": {

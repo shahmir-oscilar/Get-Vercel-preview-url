@@ -26,19 +26,7 @@ const main = async () => {
 
     if (limit > 100) core.setFailed('Maximum pagination limit is 100');
 
-    const {deployments} = await fetch(
-      `https://api.vercel.com/v6/deployments?teamId=${vercel_team_id}&limit=${limit}`,
-      {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${vercel_access_token}`,
-        },
-      }
-    ).then((res) => res.json());
-
-    if (!deployments) core.setFailed('Unable to fetch Vercel deployments');
-
-    let sha;
+    let sha, branch;
     if (commit.eventName === 'pull_request') {
       const octokit = github.getOctokit(gh_token);
 
@@ -51,12 +39,26 @@ const main = async () => {
       });
 
       sha = currentPR.data.head.sha;
+      branch = currentPR.data.head.ref;
     } else {
       sha = commit.sha;
+      branch = commit.ref;
     }
+    branch = branch.replace('refs/heads/', '');
 
-    let deployment = deployments.find((deployment) => deployment.meta.githubCommitSha === sha);
+    const {deployments} = await fetch(
+      `https://api.vercel.com/v6/deployments?teamId=${vercel_team_id}&limit=${limit}&sha=${sha}&branch=${branch}`,
+      {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${vercel_access_token}`,
+        },
+      }
+    ).then((res) => res.json());
 
+    if (!deployments) core.setFailed('Unable to fetch Vercel deployments');
+
+    let deployment = deployments[0];
     if (!deployment) core.error(`Unable to find deployment with sha: ${sha}`);
 
     if (deployment.state === 'READY') core.setOutput('preview_url', deployment.url);

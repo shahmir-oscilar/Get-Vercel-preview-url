@@ -8888,8 +8888,28 @@ const main = async () => {
 
     if (limit > 100) core.setFailed('Maximum pagination limit is 100');
 
+    let sha, branch;
+    if (commit.eventName === 'pull_request') {
+      const octokit = github.getOctokit(gh_token);
+
+      const prNumber = commit.payload.pull_request.number;
+
+      const currentPR = await octokit.rest.pulls.get({
+        owner: commit.repo.owner,
+        repo: commit.repo.repo,
+        pull_number: prNumber,
+      });
+
+      sha = currentPR.data.head.sha;
+      branch = currentPR.data.head.ref;
+    } else {
+      sha = commit.sha;
+      branch = commit.ref;
+    }
+    branch = branch.replace('refs/heads/', '');
+
     const {deployments} = await fetch(
-      `https://api.vercel.com/v6/deployments?teamId=${vercel_team_id}&limit=${limit}`,
+      `https://api.vercel.com/v6/deployments?teamId=${vercel_team_id}&limit=${limit}&sha=${sha}&branch=${branch}`,
       {
         method: 'GET',
         headers: {
@@ -8900,22 +8920,7 @@ const main = async () => {
 
     if (!deployments) core.setFailed('Unable to fetch Vercel deployments');
 
-    let sha;
-    if (commit.eventName === 'pull_request') {
-      const octokit = github.getOctokit(gh_token);
-      const prNumber = commit.payload.pull_request.number;
-      const currentPR = await octokit.rest.pulls.get({
-        owner: commit.repo.owner,
-        repo: commit.repo.repo,
-        pull_number: prNumber,
-      });
-      sha = currentPR.data.head.sha;
-    } else {
-      sha = commit.sha;
-    }
-
-    let deployment = deployments.find((deployment) => deployment.meta.githubCommitSha === sha);
-
+    let deployment = deployments[0];
     if (!deployment) core.error(`Unable to find deployment with sha: ${sha}`);
 
     if (deployment.state === 'READY') core.setOutput('preview_url', deployment.url);
