@@ -8882,11 +8882,8 @@ const main = async () => {
     const vercel_access_token = core.getInput('vercel_access_token', {required: true});
     const gh_token = core.getInput('gh_token', {required: true});
     const timeout = core.getInput('timeout');
-    const limit = core.getInput('limit');
     const prefix_path = core.getInput('prefix_path');
     const prefix_url = core.getInput('prefix_url');
-
-    if (limit > 100) core.setFailed('Maximum pagination limit is 100');
 
     let sha, branch;
     if (commit.eventName === 'pull_request') {
@@ -8909,7 +8906,7 @@ const main = async () => {
     branch = branch.replace('refs/heads/', '');
 
     const {deployments} = await fetch(
-      `https://api.vercel.com/v6/deployments?teamId=${vercel_team_id}&limit=${limit}&sha=${sha}&branch=${branch}`,
+      `https://api.vercel.com/v6/deployments?teamId=${vercel_team_id}&sha=${sha}&branch=${branch}`,
       {
         method: 'GET',
         headers: {

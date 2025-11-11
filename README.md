@@ -31,7 +31,6 @@ All inputs are added to the action's `with` property, see the basic example abov
 |     `prefix_url`      |                                                                     Optional string to prefix the preview URL, defaults to `https://`                                                                      | `false`  |
 |     `prefix_path`     |                                                                           Optional string to prefix the path of the preview URL                                                                            | `false`  |
 |       `timeout`       |                                                      Time in milliseconds spent waiting between requests to the Vercel REST Api, defaults to `3000`ms                                                      | `false`  |
-|        `limit`        |                                              Pagination limit of the initial request to the Vercel deployments endpoint, defaults to `20` with a max of `100`                                              | `false`  |
 
 ### Outputs
 
