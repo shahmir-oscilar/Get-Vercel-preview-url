@@ -9,7 +9,7 @@ Inside your `.github/workflows/{your-workflow}.yml` file:
 ```yml
 - name: Get Vercel Preview URL
   id: get-vercel-preview-url
-  uses: ViktorJT/Get-vercel-preview-url@1.2.2
+  uses: shahmir-oscilar/Get-vercel-preview-url@2.0.0
   with:
     vercel_access_token: ${{ secrets.VERCEL_ACCESS_TOKEN }}
     vercel_team_id: ${{ secrets.VERCEL_TEAM_ID }}
@@ -57,7 +57,7 @@ jobs:
 
       - name: Get Vercel Preview URL
         id: vercel-deployment
-        uses: ViktorJT/Get-Vercel-preview-url@main
+        uses: shahmir-oscilar/Get-Vercel-preview-url@2.0.0
         with:
           vercel_access_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_team_id: ${{ secrets.VERCEL_TEAM_ID }}
