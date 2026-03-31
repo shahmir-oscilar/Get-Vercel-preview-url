@@ -1,6 +1,5 @@
-const core = require('@actions/core');
-const fetch = require('node-fetch');
-const github = require('@actions/github');
+import * as core from '@actions/core';
+import * as github from '@actions/github';
 
 function sleep(ms) {
   return new Promise((resolve) => {
@@ -16,9 +15,9 @@ const main = async () => {
   }
 
   try {
-    const vercel_team_id = core.getInput('vercel_team_id', {required: true});
-    const vercel_access_token = core.getInput('vercel_access_token', {required: true});
-    const gh_token = core.getInput('gh_token', {required: true});
+    const vercel_team_id = core.getInput('vercel_team_id', { required: true });
+    const vercel_access_token = core.getInput('vercel_access_token', { required: true });
+    const gh_token = core.getInput('gh_token', { required: true });
     const timeout = core.getInput('timeout');
     const prefix_path = core.getInput('prefix_path');
     const prefix_url = core.getInput('prefix_url');
@@ -43,7 +42,7 @@ const main = async () => {
     }
     branch = branch.replace('refs/heads/', '');
 
-    const {deployments} = await fetch(
+    const { deployments } = await fetch(
       `https://api.vercel.com/v6/deployments?teamId=${vercel_team_id}&sha=${sha}&branch=${branch}`,
       {
         method: 'GET',
